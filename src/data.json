@@ -1,0 +1,47 @@
+[
+  {
+    "site": "Atehno",
+    "url": "https://atehno.md/catalog/samsung-s24-ultra-13655",
+    "scrapData": {
+      "container": ".product-inside",
+      "title": "h3",
+      "price": ".amount"
+    }
+  },
+  {
+    "site": "Moldcell",
+    "url": "https://eshop.moldcell.md/ro/telefoane/smartphone?bfilter=producator[samsung]/model[s24ultra]",
+    "scrapData": {
+      "container": ".phone-info",
+      "title": ".phone-model",
+      "price": ".online-price"
+    }
+  },
+  {
+    "site": "Orange",
+    "url": "https://eshop.orange.md/ro/catalog/telefoane/samsung-galaxy-s24/samsung-galaxy-s24-ultra",
+    "scrapData": {
+      "container": ".product-info",
+      "title": "h2",
+      "price": ".product-offer"
+    }
+  },
+  {
+    "site": "Darwin",
+    "url": "https://darwin.md/telefoane?&brand[18][]=samsung&ff[19][]=galaxy%20s24%20ultra",
+    "scrapData": {
+      "container": ".card-product",
+      "title": ".title",
+      "price": ".price-new"
+    }
+  },
+  {
+    "site": "Maximum",
+    "url": "https://maximum.md/ro/search?applied=1&category_ids=10633&from_price=2&query=Smartphone%20Samsung%20S24%20Ultra&to_price=546499",
+    "scrapData": {
+      "container": ".product__item",
+      "title": ".product__item__title",
+      "price": ".product__item__price-current"
+    }
+  }
+]
