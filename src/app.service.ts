@@ -5,6 +5,7 @@ import * as XLSX from 'xlsx';
 interface Item {
   title: string;
   price: string;
+  link?: string;
 }
 
 interface ScrappableItem {
@@ -20,16 +21,16 @@ interface ScrappableItem {
 @Injectable()
 export class AppService {
 
-  async scrapeData(data: ScrappableItem[], res): Promise<void> {
-    const result = await this.scrapeAll(data);
+  async scrapeData(data: ScrappableItem[], res, target:string): Promise<void> {
+    const result = await this.scrapeAll(data, target);
     this.exportExcel(result, res);
   }
 
-  private async scrapeAll(data: ScrappableItem[]): Promise<{ [key: string]: Item[] }> {
+  private async scrapeAll(data: ScrappableItem[], target: string): Promise<{ [key: string]: Item[] }> {
     const result: { [key: string]: Item[] } = {};
 
     for (const item of data) {
-      result[item.site] = await this.scrape(item);
+      result[item.site] = target === 'phone' ? await this.scrape(item) : await this.scrapNotebooks(item);
     }
 
     return result;
@@ -56,6 +57,54 @@ export class AppService {
       await browser.close();
     }
   }
+
+  async scrapNotebooks(item) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    try {
+      const results = [];
+
+      await page.goto(item.url);
+
+      const itemsInfo =  await page.evaluate(({ container, title, price, linkSelector }) => {
+        const itemDivs = document.querySelectorAll(container);
+        return Array.from(itemDivs).map(div => ({
+          title: (div.querySelector(title)?.textContent || '-').trim(),
+          price: (div.querySelector(price)?.textContent || '-').trim(),
+          link: div.querySelector(linkSelector)?.href || '-'
+        }));
+      }, item.scrapData);
+
+      for (const scrapedItem of itemsInfo)
+      {
+        if (scrapedItem.link !== '-') {
+          await page.goto(scrapedItem.link);
+
+          const screenSize = await page.evaluate((tagNumber) => {
+            const infoItem = document.querySelectorAll('td')[tagNumber || 3];
+            return infoItem?.textContent?.trim() || '-';
+          }, item?.scrapData?.tagNumber);
+
+          results.push({
+            title: scrapedItem.title,
+            price: scrapedItem.price,
+            screenSize
+          });
+
+          await page.goBack();
+        }
+      }
+
+      return results;
+    } catch (error) {
+      console.error('Error while scraping:', error);
+      throw error;
+    } finally {
+      await browser.close();
+    }
+  }
+
 
   private exportExcel(data: { [key: string]: Item[] }, res): void {
     const workbook = XLSX.utils.book_new();

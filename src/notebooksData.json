@@ -1,0 +1,33 @@
+[
+  {
+    "site": "Atehno",
+    "url": "https://atehno.md/catalog/huawei-10742",
+    "scrapData": {
+      "container": ".product-inside",
+      "title": "h3",
+      "price": ".amount",
+      "linkSelector": ".img-wr"
+    }
+  },
+  {
+    "site": "Darwin",
+    "url": "https://darwin.md/laptopuri/credit-0?&brand[76][]=huawei",
+    "scrapData": {
+      "container": ".card-product",
+      "title": ".title",
+      "price": ".credit-price",
+      "linkSelector": "a",
+      "tagNumber": 43
+    }
+  },
+  {
+    "site": "Enter",
+    "url": "https://enter.online/laptopuri/huawei",
+    "scrapData": {
+      "container": ".grid-item",
+      "title": ".product-title",
+      "price": ".price",
+      "linkSelector": "a"
+    }
+  }
+]
