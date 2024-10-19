@@ -15,7 +15,7 @@
     "scrapData": {
       "container": ".card-product",
       "title": ".title",
-      "price": ".credit-price",
+      "price": ".price-new",
       "linkSelector": "a",
       "tagNumber": 43
     }
