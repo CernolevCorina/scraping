@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
 import * as XLSX from 'xlsx';
+import items from "./modules/temu-scrap/data.json";
 
 interface Item {
   title: string;
@@ -162,5 +163,42 @@ export class AppService {
     res.setHeader('Content-Disposition', 'attachment; filename=report.xlsx');
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.send(buffer);
+  }
+
+  exportExcelTemu(data, res){
+    // Filtrează câmpurile necesare (title și price)
+    const filteredData = data.map(item => ({ title: item.title, price: item.price }));
+
+    // Creează foaia de lucru
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+
+    // Setează lățimea coloanelor
+    worksheet['!cols'] = [
+      { wch: 60 }, // Lățimea coloanei 'title' (50 caractere)
+      { wch: 10 }, // Lățimea coloanei 'price' (10 caractere)
+    ];
+
+    // Creează un workbook
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+
+    // Scrie workbook-ul în buffer
+    const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+
+    // Setează antetele pentru răspuns
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="data.xlsx"');
+
+    // Trimite fișierul Excel
+    res.send(buffer);
+  }
+
+
+  async scrapeTemu(res) {
+    const uniqueItems = items.filter((item, index, self) =>
+      index === self.findIndex(t => t.title === item.title && t.price === item.price)
+    );
+
+    setTimeout(() => this.exportExcelTemu(uniqueItems, res), 15000)
   }
 }

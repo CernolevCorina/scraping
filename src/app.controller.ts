@@ -19,4 +19,9 @@ export class AppController {
   async scrapeSamsungNotebook(@Res() res: Response): Promise<void> {
     await this.appService.scrapeData(notebooksData, res, 'notebook');
   }
+
+  @Get('TemuData')
+  async scrapeTemu(@Res() res: Response) {
+    await this.appService.scrapeTemu(res);
+  }
 }
